@@ -184,7 +184,7 @@ async def login(client:Client) -> None:
 
             cursor.execute("INSERT INTO users (username, password) VALUES (?, ?);", (username, password,))
             client.id = cursor.lastrowid
-            cursor.execute("INSERT INTO UserChannelPermissions (user_id, channel_id, permission_level) VALUES (?, ?, ?);", (client.id, hub_channel.channel_id, 1,))
+            cursor.execute("INSERT INTO UserChannelPermissions (user_id, channel_id, permission_level) VALUES (?, ?, ?);", (client.id, hub_channel.channel_id, 100,))
             conn.commit()
         await Channel.update_channels(client)
         cursor.execute("SELECT * FROM BannedUsersChannel WHERE user_id = ? AND channel_id = ?;", (client.id,hub_channel.channel_id,))
