@@ -26,7 +26,7 @@ async def keep_alive_timer() -> None:
     while True:
         current_time = time.time()
         client: Client
-        for client in clients.copy().values():
+        for client in clients.values():
             if client.connected:
                 if client.last_ping_time is None:
                     client.last_ping_time = current_time
@@ -85,6 +85,10 @@ async def broadcast(message: Message, channel: Channel = None, from_server=False
             channel.broadcast(message)
 
 async def handle_client(client: Client) -> None:
+    message = Message("Server", 
+                      'Welcome to the server! This is the Hub channel, only you can see your messages. To chat publicly, join another channel or create one.',
+                      main_type=MessageType.CHAT, sub_type=MessageSubType.GENERAL)
+    await client.send_message(message)
     # handles the client. Recieves messages, sends messages, handles Ping / Pong and more
     while client.connected:
         message: (Message|None) = await client.receive_data()
@@ -124,7 +128,10 @@ async def handle_client(client: Client) -> None:
                 ESCAPE_CODE + prefix, prefix
             )
             channel:Channel = client.current_channel
-            await channel.broadcast(message)
+            if channel != hub_channel:
+                await channel.broadcast(message)
+            else:
+                await client.send_message(message)
 
 async def send_connect_data(client: Client) -> None:
     # sends common data on first connection such as max message lengths and more.
@@ -184,7 +191,7 @@ async def login(client:Client) -> None:
 
             cursor.execute("INSERT INTO users (username, password) VALUES (?, ?);", (username, password,))
             client.id = cursor.lastrowid
-            cursor.execute("INSERT INTO UserChannelPermissions (user_id, channel_id, permission_level) VALUES (?, ?, ?);", (client.id, hub_channel.channel_id, 100,))
+            cursor.execute("INSERT INTO UserChannelPermissions (user_id, channel_id, permission_level) VALUES (?, ?, ?);", (client.id, hub_channel.channel_id, 1,))
             conn.commit()
         await Channel.update_channels(client)
         cursor.execute("SELECT * FROM BannedUsersChannel WHERE user_id = ? AND channel_id = ?;", (client.id,hub_channel.channel_id,))
