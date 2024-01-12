@@ -10,17 +10,17 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
-    password TEXT -- Assuming passwords are hashed
+    password TEXT
 );""")
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS BannedUsersChannel (
-    ban_id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Unique ID for the ban record
+    ban_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     channel_id INTEGER NOT NULL,
-    ban_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Timestamp of when the ban was issued
+    ban_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     ban_duration REAL,  -- Duration of the ban in days, NULL for permanent bans
-    ban_reason TEXT,  -- Optional field to describe the reason for the ban
+    ban_reason TEXT,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (channel_id) REFERENCES channels(channel_id)
 );""")
