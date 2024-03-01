@@ -1,5 +1,7 @@
 # TCP-Chat-Server
 
+# Current updated branch: Testing
+
 ## New Update Coming Soon!
 - Adding lots of new commands with complex-like features. (Clear, custom-input, and more)
 - Adding private messaging (finally) and the addition of private channels that can be password protected and privately viewed.
